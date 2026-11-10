@@ -1,0 +1,64 @@
+body {
+  font-family: "Plus Jakarta Sans", sans-serif;
+}
+
+.form-card {
+  background: white;
+  padding: 28px;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+}
+
+.form-label {
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.form-control,
+.form-select {
+  padding: 11px 13px;
+  border-radius: 7px;
+  font-size: 14px;
+}
+
+.form-control:focus,
+.form-select:focus {
+  box-shadow: none;
+  border-color: #536dfe;
+}
+
+.btn-save {
+  background: #536dfe;
+  color: white;
+  padding: 11px 25px;
+  border-radius: 7px;
+  border: none;
+  font-weight: 600;
+}
+
+.btn-save:hover {
+  background: #4055d6;
+  color: white;
+}
+
+.btn-cancel {
+  padding: 11px 25px;
+  border-radius: 7px;
+  font-weight: 600;
+}
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 280px;
+    height: 100vh;
+    z-index: 100;
+}
+
+.main-content {
+    margin-left: 280px;
+    width: calc(100% - 280px);
+    padding: 30px !important;
+    min-height: 100vh;
+}

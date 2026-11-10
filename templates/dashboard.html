@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard | Inventory Management</title>
+
+  <!-- Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Bootstrap 5 & Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+
+  <!-- Custom styles -->
+ <link href="{{ url_for('static', filename='css/dashboard.css') }}" rel="stylesheet">
+</head>
+<body>
+
+  <!-- ========== SIDEBAR ========== -->
+  <aside class="sidebar offcanvas-lg offcanvas-start bg-white d-flex flex-column" tabindex="-1" id="sidebar">
+
+    <div class="d-flex align-items-center justify-content-between p-3 border-bottom">
+      <a href="{{ url_for('dashboard') }}" class="d-flex align-items-center gap-2 text-dark text-decoration-none">
+        <span class="icon-box bg-primary text-white"><i class="bi bi-box-seam"></i></span>
+        <span class="fw-bold lh-sm">Inventory<br><small class="text-muted fw-normal">Management</small></span>
+      </a>
+      <button type="button" class="btn-close d-lg-none" data-bs-dismiss="offcanvas" data-bs-target="#sidebar" aria-label="Close menu"></button>
+    </div>
+
+    <nav class="flex-grow-1 p-3">
+      <p class="small text-uppercase text-muted fw-semibold mb-2">Main Menu</p>
+      <ul class="nav flex-column">
+        <li><a class="nav-link {% if request.endpoint == 'dashboard' %}active{% endif %}" href="{{ url_for('dashboard') }}"><i class="bi bi-grid-1x2"></i>Dashboard</a></li>
+        <li><a class="nav-link {% if request.endpoint == 'products' %}active{% endif %}" href="{{ url_for('products') }}"><i class="bi bi-box"></i>Products</a></li>
+        <li><a class="nav-link {% if request.endpoint == 'add_product' %}active{% endif %}" href="{{ url_for('add_product') }}"><i class="bi bi-plus-square"></i>Add Product</a></li>
+        <li><a class="nav-link {% if request.endpoint == 'stock_management' %}active{% endif %}" href="{{ url_for('stock_management') }}"><i class="bi bi-arrow-left-right"></i>Stock Management</a></li>
+        <li>
+          <a class="nav-link {% if request.endpoint == 'low_stock_alerts' %}active{% endif %}" href="{{ url_for('low_stock_alerts') }}">
+            <i class="bi bi-exclamation-triangle"></i>Low Stock Alerts
+            <span class="badge rounded-pill bg-orange-subtle text-orange ms-auto">19</span>
+          </a>
+        </li>
+        <li><a class="nav-link {% if request.endpoint == 'reports' %}active{% endif %}" href="{{ url_for('reports') }}"><i class="bi bi-bar-chart-line"></i>Reports</a></li>
+      </ul>
+    </nav>
+
+    <div class="p-3 border-top">
+      <a class="nav-link text-danger" href="{{ url_for('logout') }}"><i class="bi bi-box-arrow-left"></i>Logout</a>
+    </div>
+  </aside>
+
+  <!-- ========== MAIN AREA ========== -->
+  <div class="main">
+
+    <!-- Top bar -->
+    <header class="topbar bg-white border-bottom d-flex align-items-center justify-content-between gap-3 px-3 px-md-4 py-3">
+      <div class="d-flex align-items-center gap-3">
+        <button class="btn btn-outline-secondary d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar" aria-label="Open menu">
+          <i class="bi bi-list"></i>
+        </button>
+        <div>
+          <h1 class="h4 fw-bold mb-0">Dashboard</h1>
+          <p class="small text-muted mb-0">Welcome Back, Admin!</p>
+        </div>
+      </div>
+
+      <div class="d-flex align-items-center gap-2">
+        <!-- Search -->
+        <form class="d-none d-md-block" action="{{ url_for('products') }}" method="get">
+          <div class="input-group search-box">
+            <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+            <input class="form-control" type="search" name="q" placeholder="Search products..." aria-label="Search">
+          </div>
+        </form>
+
+        <!-- Notifications -->
+        <div class="dropdown">
+          <button class="btn btn-outline-secondary position-relative" type="button" data-bs-toggle="dropdown" aria-label="Notifications">
+            <i class="bi bi-bell"></i>
+            <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger rounded-circle"></span>
+          </button>
+          <div class="dropdown-menu dropdown-menu-end notification-menu">
+            <h6 class="dropdown-header">Notifications</h6>
+            <a class="dropdown-item text-wrap" href="{{ url_for('low_stock_alerts') }}">
+              <i class="bi bi-x-octagon text-danger me-2"></i><strong>USB-C Hub 7-in-1</strong> is out of stock
+            </a>
+            <a class="dropdown-item text-wrap" href="{{ url_for('low_stock_alerts') }}">
+              <i class="bi bi-exclamation-triangle text-orange me-2"></i><strong>A4 Copier Paper</strong> is running low
+            </a>
+            <a class="dropdown-item text-wrap" href="{{ url_for('stock_management') }}">
+              <i class="bi bi-arrow-down-left text-success me-2"></i>120 units of <strong>Wireless Mouse</strong> added
+            </a>
+          </div>
+        </div>
+
+        <!-- Profile -->
+        <div class="dropdown">
+          <button class="btn btn-light border d-flex align-items-center gap-2 py-1 ps-1" type="button" data-bs-toggle="dropdown">
+            <span class="icon-box bg-primary text-white fs-6 fw-bold" style="width: 34px; height: 34px;">AD</span>
+            <span class="d-none d-sm-inline fw-semibold">Admin</span>
+            <i class="bi bi-chevron-down small"></i>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li><a class="dropdown-item" href="#"><i class="bi bi-person me-2"></i>My Profile</a></li>
+            <li><a class="dropdown-item" href="#"><i class="bi bi-gear me-2"></i>Settings</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item text-danger" href="{{ url_for('logout') }}"><i class="bi bi-box-arrow-left me-2"></i>Logout</a></li>
+          </ul>
+        </div>
+      </div>
+    </header>
+
+    <!-- Page content -->
+    <main class="p-3 p-md-4">
+
+      <!-- Search (phones only) -->
+      <form class="d-md-none mb-3" action="{{ url_for('products') }}" method="get">
+        <div class="input-group">
+          <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+          <input class="form-control" type="search" name="q" placeholder="Search products..." aria-label="Search">
+        </div>
+      </form>
+
+      <!-- Summary cards -->
+      <div class="row g-3 mb-4">
+        <div class="col-12 col-sm-6 col-xl-3">
+          <div class="card border-0 shadow-sm h-100">
+            <div class="card-body d-flex align-items-center gap-3">
+              <span class="icon-box bg-primary-subtle text-primary"><i class="bi bi-box-seam"></i></span>
+              <div>
+                <p class="small text-muted mb-0">Total Products</p>
+                <h2 class="h3 fw-bold mb-0">248</h2>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-sm-6 col-xl-3">
+          <div class="card border-0 shadow-sm h-100">
+            <div class="card-body d-flex align-items-center gap-3">
+              <span class="icon-box bg-success-subtle text-success"><i class="bi bi-stack"></i></span>
+              <div>
+                <p class="small text-muted mb-0">Total Stock</p>
+                <h2 class="h3 fw-bold mb-0">12,560</h2>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-sm-6 col-xl-3">
+          <div class="card border-0 shadow-sm h-100">
+            <div class="card-body d-flex align-items-center gap-3">
+              <span class="icon-box bg-orange-subtle text-orange"><i class="bi bi-exclamation-triangle"></i></span>
+              <div>
+                <p class="small text-muted mb-0">Low Stock</p>
+                <h2 class="h3 fw-bold mb-0">14</h2>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-sm-6 col-xl-3">
+          <div class="card border-0 shadow-sm h-100">
+            <div class="card-body d-flex align-items-center gap-3">
+              <span class="icon-box bg-danger-subtle text-danger"><i class="bi bi-x-octagon"></i></span>
+              <div>
+                <p class="small text-muted mb-0">Out of Stock</p>
+                <h2 class="h3 fw-bold mb-0">5</h2>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick actions -->
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white py-3">
+          <h3 class="h6 fw-bold mb-0">Quick Actions</h3>
+        </div>
+        <div class="card-body">
+          <div class="row g-2">
+            <div class="col-12 col-sm-6 col-lg-3">
+              <a href="{{ url_for('add_product') }}" class="btn btn-primary w-100 py-2"><i class="bi bi-plus-lg me-2"></i>Add New Product</a>
+            </div>
+            <div class="col-12 col-sm-6 col-lg-3">
+              <a href="{{ url_for('stock_management') }}" class="btn btn-outline-success w-100 py-2"><i class="bi bi-box-arrow-in-down me-2"></i>Add Stock</a>
+            </div>
+            <div class="col-12 col-sm-6 col-lg-3">
+              <a href="{{ url_for('stock_management') }}" class="btn btn-outline-danger w-100 py-2"><i class="bi bi-box-arrow-up me-2"></i>Reduce Stock</a>
+            </div>
+            <div class="col-12 col-sm-6 col-lg-3">
+              <a href="{{ url_for('products') }}" class="btn btn-outline-secondary w-100 py-2"><i class="bi bi-list-ul me-2"></i>View All Products</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Charts Section -->
+    <div class="charts-container">
+
+    <div class="chart-box">
+        <h3>Monthly Sales</h3>
+        <canvas id="salesChart"></canvas>
+    </div>
+
+    <div class="chart-box">
+        <h3>Product Categories</h3>
+        <canvas id="categoryChart"></canvas>
+    </div>
+
+</div>
+
+      <!-- Recent products
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+          <h3 class="h6 fw-bold mb-0">Recent Products</h3>
+          <a href="{{ url_for('products') }}" class="btn btn-sm btn-outline-primary">View All</a>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead>
+              <tr>
+                <th>Product ID</th>
+                <th>Product Name</th>
+                <th>Category</th>
+                <th class="text-end">Price</th>
+                <th class="text-end">Quantity</th>
+                <th>Stock Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="text-muted">PRD-1048</td>
+                <td class="fw-semibold">Wireless Optical Mouse</td>
+                <td>Electronics</td>
+                <td class="text-end">₹649.00</td>
+                <td class="text-end">320</td>
+                <td><span class="badge rounded-pill bg-success-subtle text-success">In Stock</span></td>
+              </tr>
+              <tr>
+                <td class="text-muted">PRD-1047</td>
+                <td class="fw-semibold">Ergonomic Office Chair</td>
+                <td>Furniture</td>
+                <td class="text-end">₹8,499.00</td>
+                <td class="text-end">42</td>
+                <td><span class="badge rounded-pill bg-success-subtle text-success">In Stock</span></td>
+              </tr>
+              <tr>
+                <td class="text-muted">PRD-1046</td>
+                <td class="fw-semibold">A4 Copier Paper (500 Sheets)</td>
+                <td>Office Supplies</td>
+                <td class="text-end">₹299.00</td>
+                <td class="text-end">8</td>
+                <td><span class="badge rounded-pill bg-orange-subtle text-orange">Low Stock</span></td>
+              </tr>
+              <tr>
+                <td class="text-muted">PRD-1045</td>
+                <td class="fw-semibold">USB-C Hub 7-in-1</td>
+                <td>Accessories</td>
+                <td class="text-end">₹2,199.00</td>
+                <td class="text-end">0</td>
+                <td><span class="badge rounded-pill bg-danger-subtle text-danger">Out of Stock</span></td>
+              </tr>
+              <tr>
+                <td class="text-muted">PRD-1044</td>
+                <td class="fw-semibold">Mechanical Keyboard</td>
+                <td>Electronics</td>
+                <td class="text-end">₹3,450.00</td>
+                <td class="text-end">76</td>
+                <td><span class="badge rounded-pill bg-success-subtle text-success">In Stock</span></td>
+              </tr>
+              <tr>
+                <td class="text-muted">PRD-1043</td>
+                <td class="fw-semibold">Gel Ink Pens (Pack of 10)</td>
+                <td>Office Supplies</td>
+                <td class="text-end">₹180.00</td>
+                <td class="text-end">12</td>
+                <td><span class="badge rounded-pill bg-orange-subtle text-orange">Low Stock</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div> -->
+
+      <div class="row g-4">
+
+        <!-- Recent stock transactions -->
+        <div class="col-12 col-xxl-8">
+          <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+              <h3 class="h6 fw-bold mb-0">Recent Stock Transactions</h3>
+              <a href="{{ url_for('stock_management') }}" class="btn btn-sm btn-outline-primary">View All</a>
+            </div>
+            <div class="table-responsive">
+              <table class="table table-hover align-middle mb-0">
+                <thead>
+                  <tr>
+                    <th>Transaction ID</th>
+                    <th>Product Name</th>
+                    <th>Transaction Type</th>
+                    <th class="text-end">Quantity</th>
+                    <th>Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="text-muted">TXN-5021</td>
+                    <td class="fw-semibold">Wireless Optical Mouse</td>
+                    <td class="text-success"><i class="bi bi-arrow-down-left me-1"></i>Stock Added</td>
+                    <td class="text-end text-success fw-bold">+120</td>
+                    <td>10 Nov 2026</td>
+                  </tr>
+                  <tr>
+                    <td class="text-muted">TXN-5020</td>
+                    <td class="fw-semibold">USB-C Hub 7-in-1</td>
+                    <td class="text-danger"><i class="bi bi-arrow-up-right me-1"></i>Stock Reduced</td>
+                    <td class="text-end text-danger fw-bold">−25</td>
+                    <td>10 Nov 2026</td>
+                  </tr>
+                  <tr>
+                    <td class="text-muted">TXN-5019</td>
+                    <td class="fw-semibold">Ergonomic Office Chair</td>
+                    <td class="text-success"><i class="bi bi-arrow-down-left me-1"></i>Stock Added</td>
+                    <td class="text-end text-success fw-bold">+30</td>
+                    <td>09 Nov 2026</td>
+                  </tr>
+                  <tr>
+                    <td class="text-muted">TXN-5018</td>
+                    <td class="fw-semibold">A4 Copier Paper (500 Sheets)</td>
+                    <td class="text-danger"><i class="bi bi-arrow-up-right me-1"></i>Stock Reduced</td>
+                    <td class="text-end text-danger fw-bold">−60</td>
+                    <td>09 Nov 2026</td>
+                  </tr>
+                  <tr>
+                    <td class="text-muted">TXN-5017</td>
+                    <td class="fw-semibold">Mechanical Keyboard</td>
+                    <td class="text-success"><i class="bi bi-arrow-down-left me-1"></i>Stock Added</td>
+                    <td class="text-end text-success fw-bold">+50</td>
+                    <td>08 Nov 2026</td>
+                  </tr>
+                  <tr>
+                    <td class="text-muted">TXN-5016</td>
+                    <td class="fw-semibold">Gel Ink Pens (Pack of 10)</td>
+                    <td class="text-danger"><i class="bi bi-arrow-up-right me-1"></i>Stock Reduced</td>
+                    <td class="text-end text-danger fw-bold">−40</td>
+                    <td>07 Nov 2026</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Low stock alerts -->
+        <div class="col-12 col-xxl-4">
+          <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+              <h3 class="h6 fw-bold mb-0">Low Stock Alerts</h3>
+              <a href="{{ url_for('low_stock_alerts') }}" class="small fw-semibold text-decoration-none">See all</a>
+            </div>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item d-flex justify-content-between align-items-center py-3">
+                <div><div class="fw-semibold">USB-C Hub 7-in-1</div><small class="text-muted">0 units available</small></div>
+                <span class="badge rounded-pill bg-danger-subtle text-danger">Out of Stock</span>
+              </li>
+              <li class="list-group-item d-flex justify-content-between align-items-center py-3">
+                <div><div class="fw-semibold">HDMI Cable 2m</div><small class="text-muted">0 units available</small></div>
+                <span class="badge rounded-pill bg-danger-subtle text-danger">Out of Stock</span>
+              </li>
+              <li class="list-group-item d-flex justify-content-between align-items-center py-3">
+                <div><div class="fw-semibold">A4 Copier Paper</div><small class="text-muted">8 units available</small></div>
+                <span class="badge rounded-pill bg-orange-subtle text-orange">Low Stock</span>
+              </li>
+              <li class="list-group-item d-flex justify-content-between align-items-center py-3">
+                <div><div class="fw-semibold">Gel Ink Pens (Pack of 10)</div><small class="text-muted">12 units available</small></div>
+                <span class="badge rounded-pill bg-orange-subtle text-orange">Low Stock</span>
+              </li>
+              <li class="list-group-item d-flex justify-content-between align-items-center py-3">
+                <div><div class="fw-semibold">Whiteboard Markers</div><small class="text-muted">15 units available</small></div>
+                <span class="badge rounded-pill bg-orange-subtle text-orange">Low Stock</span>
+              </li>
+              <li class="list-group-item d-flex justify-content-between align-items-center py-3">
+                <div><div class="fw-semibold">Laptop Stand</div><small class="text-muted">18 units available</small></div>
+                <span class="badge rounded-pill bg-orange-subtle text-orange">Low Stock</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <footer class="text-center text-muted small mt-4 pt-3 border-top">
+        &copy; 2026 Inventory Management System. All rights reserved.
+      </footer>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+
+// Monthly Sales Bar Chart
+const salesChart = document.getElementById('salesChart');
+
+new Chart(salesChart, {
+    type: 'bar',
+
+    data: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+
+        datasets: [{
+            label: 'Sales',
+            data: [12000, 19000, 15000, 25000, 22000, 30000],
+            backgroundColor: '#4e73df',
+            borderRadius: 6
+        }]
+    },
+
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                display: false
+            }
+        }
+    }
+});
+
+
+// Product Category Doughnut Chart
+const categoryChart = document.getElementById('categoryChart');
+
+new Chart(categoryChart, {
+    type: 'doughnut',
+
+    data: {
+        labels: ['Electronics', 'Clothing', 'Grocery', 'Others'],
+
+        datasets: [{
+            data: [30, 25, 20, 25],
+
+            backgroundColor: [
+                '#4e73df',
+                '#1cc88a',
+                '#f6c23e',
+                '#36b9cc'
+            ]
+        }]
+    },
+
+    options: {
+        responsive: true,
+
+        plugins: {
+            legend: {
+                position: 'bottom'
+            }
+        }
+    }
+});
+
+</script>
+</body>
+</html>

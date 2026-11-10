@@ -1,0 +1,186 @@
+
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: #f4f6fb;
+}
+
+/* Sidebar */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 280px;
+    height: 100vh;
+    z-index: 100;
+}
+
+/* Main Content */
+.main-content {
+    margin-left: 280px;
+    width: calc(100% - 280px);
+    padding: 30px !important;
+    min-height: 100vh;
+}
+
+/* Summary Cards */
+.report-card {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 12px;
+    height: 100%;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+}
+
+.report-card p {
+    color: #758094;
+    font-size: 13px;
+    margin-top: 15px;
+    margin-bottom: 5px;
+}
+
+.report-card h3 {
+    font-size: 23px;
+    font-weight: 700;
+    margin: 0;
+}
+
+.report-icon {
+    width: 43px;
+    height: 43px;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+}
+
+.report-icon.blue {
+    background: #e5edff;
+    color: #536dfe;
+}
+
+.report-icon.purple {
+    background: #f0e8ff;
+    color: #9161d8;
+}
+
+.report-icon.green {
+    background: #e0f6eb;
+    color: #21a56b;
+}
+
+.report-icon.orange {
+    background: #fff0dc;
+    color: #e99a17;
+}
+
+/* Stock Movement */
+.movement-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 22px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+}
+
+.movement-card h3 {
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.movement-card > i {
+    font-size: 30px;
+}
+
+/* Charts */
+.chart-card {
+    background: #ffffff;
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+}
+
+.chart-container {
+    height: 280px;
+    position: relative;
+}
+
+/* Tables */
+.report-table-card {
+    background: #ffffff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+}
+
+.table-heading {
+    padding: 23px;
+    border-bottom: 1px solid #edf0f4;
+}
+
+.table thead th {
+    background: #f8f9fb;
+    color: #687386;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 16px;
+    white-space: nowrap;
+}
+
+.table tbody td {
+    padding: 16px;
+    font-size: 13px;
+    border-bottom: 1px solid #edf0f4;
+    white-space: nowrap;
+}
+.chart-box {
+    min-height: 440px;
+    position: relative;
+}
+
+.chart-box canvas {
+    width: 100% !important;
+    height: 340px !important;
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        position: relative;
+        width: 100%;
+        height: auto;
+    }
+
+    .main-content {
+        margin-left: 0;
+        width: 100%;
+        padding: 18px !important;
+    }
+}
+
+/* Print */
+@media print {
+    .sidebar,
+    button {
+        display: none !important;
+    }
+
+    .main-content {
+        margin: 0;
+        width: 100%;
+        padding: 10px !important;
+    }
+
+    body {
+        background: white;
+    }
+
+    .report-card,
+    .chart-card,
+    .report-table-card,
+    .movement-card {
+        box-shadow: none;
+        border: 1px solid #ddd;
+    }
+}
