@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="en">
   <head>
@@ -17,6 +18,7 @@
       <h2>Admin Login</h2>
 
       <form action="/login" method="POST">
+
         <!-- Username -->
         <div class="mb-3">
           <label class="form-label">Username</label>
@@ -40,24 +42,18 @@
             required
           />
         </div>
+
+        <!-- Error Message -->
         {% if error %}
         <p class="error-message">{{ error }}</p>
         {% endif %}
 
         <!-- Login Button -->
-        <button type="submit" class="btn btn-primary login-btn">Login</button>
+        <button type="submit" class="btn btn-primary login-btn">
+          Login
+        </button>
+
       </form>
-
-      <p class="signup-link">
-        Don't have an account?
-        <a href="{{ url_for('signup') }}">Sign Up</a>
-      </p>
-
-      {% if registered %}
-      <p class="success-message">Account created successfully! Please login.</p>
-      {% endif %}
-
     </div>
   </body>
 </html>
-```
